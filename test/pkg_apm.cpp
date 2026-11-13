@@ -48,7 +48,7 @@ int main(int argc, char **argv)
                      + 0.2 * sin(2 * 3.14159265358979 * 1200.0 * t);
             buf[i] = (float)(v + noise);
         }
-        webrtc::StreamConfig sc(FS, 1, false);
+        webrtc::StreamConfig sc(FS, 1);
         if (apm->ProcessStream(chans, sc, sc, chans) != 0) {
             fprintf(stderr, "ProcessStream 失败 f=%d\n", f); return 4;
         }

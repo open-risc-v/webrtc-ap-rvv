@@ -16,9 +16,10 @@ add_executable(apm_harness test/pkg_apm.cpp)
 if(HAVE_PKG_TARGET)
   add_dependencies(apm_harness pkg)
 endif()
-target_include_directories(apm_harness PRIVATE "${PKG_PREFIX}/include/webrtc-audio-processing-2")
+target_include_directories(apm_harness PRIVATE "${PKG_PREFIX}/include" "${PKG_PREFIX}/include/webrtc-audio-processing-2")
 target_link_directories(apm_harness PRIVATE "${PKG_PREFIX}/lib")
-target_link_libraries(apm_harness PRIVATE webrtc-audio-processing pthread)
+# 上游 webrtc 与全部 absl 由 pkg-build 合并成一个归档，避免跨归档顺序问题
+target_link_libraries(apm_harness PRIVATE webrtc-ap-full pthread dl)
 target_compile_options(apm_harness PRIVATE ${RVV_FLAGS})
 set_target_properties(apm_harness PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
 
