@@ -36,6 +36,7 @@ int main(int argc, char **argv)
     float *chans[1] = {buf};
 
     uint64_t hpcm = 1469598103934665603ULL;
+    uint64_t hq8 = 1469598103934665603ULL;   /* 量化到 8bit 的哈希：浮点末位差异不该被它抓到 */
     double energy = 0.0;
     unsigned int s = 0x2468aceu;
 
@@ -59,13 +60,15 @@ int main(int argc, char **argv)
             if (iv < -32768) iv = -32768;
             hpcm ^= (uint64_t)(uint16_t)iv;
             hpcm *= 1099511628211ULL;
+            hq8 ^= (uint64_t)(uint8_t)((iv + 128) >> 8);
+            hq8 *= 1099511628211ULL;
             energy += v * v;
         }
     }
 
     char line[256];
-    snprintf(line, sizeof line, "frames=%d pcm=%d fnv_pcm=%016llx energy=%.6f\n",
-             NFRAMES, NFRAMES * FB, (unsigned long long)hpcm, energy);
+    snprintf(line, sizeof line, "frames=%d pcm=%d fnv_pcm=%016llx fnv_q8=%016llx energy=%.6f\n",
+             NFRAMES, NFRAMES * FB, (unsigned long long)hpcm, (unsigned long long)hq8, energy);
     if (outp) { FILE *fp = fopen(outp, "wb"); if (fp) { fwrite(line, 1, strlen(line), fp); fclose(fp); } }
     fputs(line, stdout);
     free(buf);

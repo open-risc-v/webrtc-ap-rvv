@@ -18,8 +18,8 @@ if(HAVE_PKG_TARGET)
 endif()
 target_include_directories(apm_harness PRIVATE "${PKG_PREFIX}/include" "${PKG_PREFIX}/include/webrtc-audio-processing-2")
 target_link_directories(apm_harness PRIVATE "${PKG_PREFIX}/lib")
-# 上游 webrtc 与全部 absl 由 pkg-build 合并成一个归档，避免跨归档顺序问题
-target_link_libraries(apm_harness PRIVATE webrtc-ap-full pthread dl)
+# 交叉构建用 meson 的静态库（-Ddefault_library=static）；库名是上游的 libwebrtc-audio-processing-2
+target_link_libraries(apm_harness PRIVATE webrtc-audio-processing-2 pthread dl)
 target_compile_options(apm_harness PRIVATE ${RVV_FLAGS})
 set_target_properties(apm_harness PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
 
