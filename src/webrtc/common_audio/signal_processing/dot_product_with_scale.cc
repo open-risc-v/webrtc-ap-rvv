@@ -11,11 +11,17 @@
 #include "common_audio/signal_processing/dot_product_with_scale.h"
 
 #include "rtc_base/numerics/safe_conversions.h"
+#if defined(RVV_KERNELS) && defined(__riscv_v)
+#include "riscv/dot_product_rvv.h"
+#endif
 
 int32_t WebRtcSpl_DotProductWithScale(const int16_t* vector1,
                                       const int16_t* vector2,
                                       size_t length,
                                       int scaling) {
+#if defined(RVV_KERNELS) && defined(__riscv_v)
+  return webrtc_dot_product_with_scale_rvv(vector1, vector2, length, scaling);
+#endif
   int64_t sum = 0;
   size_t i = 0;
 

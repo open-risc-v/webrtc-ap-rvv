@@ -7,7 +7,11 @@
 set -euo pipefail
 SRC=$1
 OUT=$2
+MARCH=${3:-rv64gcv}
+KERN=${4:-0}
+if [ "$KERN" = "1" ]; then export CFLAGS="${CFLAGS:-} -march=${MARCH} -DRVV_KERNELS=1"; export CXXFLAGS="${CXXFLAGS:-} -march=${MARCH} -DRVV_KERNELS=1"; fi
 CROSS=${3:-}
+if [ -n "$CROSS" ] && [ ! -f "$CROSS" ]; then CROSS=""; fi
 ARGS=(-Ddefault_library=static -Dneon=disabled -Dinline-sse=false --prefix="$OUT/prefix")
 if [ -n "$CROSS" ]; then
   ARGS+=(--cross-file "$CROSS")
